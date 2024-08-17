@@ -5,24 +5,17 @@ pipeline {
             steps {
                 deleteDir()
             }
-        }
-        stage("Clone Repo") {
-            steps {
-                sh "git clone https://github.com/rwmuteki/simple-node-js-react-npm-app.git"
-            }
-        }
-        stage('Build') { 
-            steps {
-                dir("simple-node-js-react-npm-app") {
-                    sh "npm install"
-                }
-            }
-        }
+        }        
         stage('Test') {
+            steps {              
+                sh './jenkins/scripts/test.sh'                
+            }
+        }
+        stage('Deliver') {
             steps {
-                dir("simple-node-js-react-npm-app") {
-                    sh './jenkins/scripts/test.sh'
-                }
+                sh './jenkins/scripts/deliver.sh'
+                input message: 'Finished using the web site? (Click "Proceed" to continue)'
+                sh './jenkins/scripts/kill.sh'
             }
         }
     }
